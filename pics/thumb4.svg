@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="530" viewBox="0 0 400 530">
+  <rect width="400" height="530" fill="#0E0C10"/>
+  <radialGradient id="g4" cx="50%" cy="45%" r="50%"><stop offset="0%" stop-color="#9B6B45" stop-opacity=".2"/><stop offset="100%" stop-color="transparent" stop-opacity="0"/></radialGradient>
+  <rect width="400" height="530" fill="url(#g4)"/>
+  <polygon points="200,225 235,275 165,275" fill="#9B6B45" opacity=".4"/>
+  <text x="200" y="310" text-anchor="middle" font-family="system-ui" font-size="13" font-weight="700" fill="rgba(242,237,229,.6)" letter-spacing="1">ProMed Clinic</text>
+  <text x="200" y="335" text-anchor="middle" font-family="system-ui" font-size="10" fill="#9B6B45" opacity=".7" letter-spacing="3">HEALTHCARE</text>
+  <text x="200" y="390" text-anchor="middle" font-family="system-ui" font-size="10" fill="rgba(242,237,229,.18)" letter-spacing="2">ADD: pics/thumb4.jpg</text>
+</svg>

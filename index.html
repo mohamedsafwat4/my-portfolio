@@ -1,209 +1,537 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohamed EL-menshawy| Narrative Video Editor</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mohamed El-Menshawy — Narrative Video Editor</title>
+  <meta name="description" content="Narrative Video Editor. Transforming ordinary footage into high-retention content through storytelling, motion, and strategic editing. Egypt → World."/>
+  <meta property="og:title" content="Mohamed El-Menshawy — Narrative Video Editor"/>
+  <meta property="og:description" content="Transforming ordinary footage into high-retention content."/>
+  <meta property="og:image" content="pics/mine.jpg"/>
+  <meta property="og:type" content="website"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
-    <div class="scroll-progress-container">
-        <div class="scroll-progress-bar" id="progressBar"></div>
+<!-- ─── CANVAS STARFIELD (fixed, full page) ─── -->
+<canvas id="starCanvas" aria-hidden="true"></canvas>
+
+<!-- ─── CONSTELLATION SVG OVERLAY ─── -->
+<svg class="const-svg" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <line class="cl" x1="280"  y1="0"   x2="1440" y2="600"/>
+  <line class="cl" x1="0"    y1="200" x2="1100" y2="900"/>
+  <line class="cl" x1="720"  y1="0"   x2="60"   y2="800"/>
+  <line class="cl" x1="1440" y1="100" x2="180"  y2="900"/>
+  <circle class="ca" cx="900" cy="500" r="340"/>
+  <circle class="ca" cx="180" cy="160" r="180"/>
+  <circle class="cn" cx="660" cy="300" r="2.5"/>
+  <circle class="cn" cx="400" cy="540" r="2"/>
+  <circle class="cn" cx="1050" cy="260" r="2.5"/>
+  <circle class="cn" cx="290"  cy="700" r="2"/>
+  <circle class="cn" cx="1200" cy="460" r="2"/>
+</svg>
+
+<!-- ══════════════════════════════════════
+     PRELOADER
+══════════════════════════════════════ -->
+<div class="preloader" id="preloader">
+  <div class="pre-center">
+    <div class="pre-logo-row">
+      <div class="pre-icon" id="preIcon">
+        <svg viewBox="0 0 44 44" width="44" height="44" fill="none">
+          <circle cx="22" cy="22" r="20" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M14 22 Q22 10 30 22 Q22 34 14 22Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="pre-texts">
+        <span class="pre-name" id="preName">MOHAMED EL-MENSHAWY</span>
+        <span class="pre-sub"  id="preSub">Narrative Video Editor</span>
+      </div>
+    </div>
+    <div class="pre-bar-wrap" id="preBarWrap">
+      <div class="pre-bar" id="preBar"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════ -->
+<header class="navbar" id="navbar">
+  <div class="nb-inner">
+
+    <!-- Logo -->
+    <a href="#hero" class="nb-logo" aria-label="Home">
+      <svg viewBox="0 0 32 32" width="26" height="26" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 16 Q16 7 22 16 Q16 25 10 16Z" fill="currentColor"/>
+      </svg>
+      M.
+    </a>
+
+    <!-- Center: email form (desktop only) -->
+    <form class="nb-form" id="nbForm" onsubmit="submitForm(event)" aria-label="Send project enquiry">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="15" height="15" aria-hidden="true">
+        <circle cx="10" cy="10" r="7.5"/><path stroke-linecap="round" d="M10 6v4l2.5 2.5"/>
+      </svg>
+      <input type="email" id="nbEmail" placeholder="Got a project? Send your e-mail" aria-label="Email address"/>
+      <button type="submit" class="nb-send">Send</button>
+    </form>
+
+    <!-- Right -->
+    <div class="nb-right">
+
+      <!-- Dark / Light toggle -->
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+          <path d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/>
+        </svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+          <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.166 17.834a.75.75 0 00-1.06 1.06l1.59 1.591a.75.75 0 001.061-1.06l-1.59-1.591zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.166 6.166a.75.75 0 001.06 1.06L8.818 5.636a.75.75 0 00-1.06-1.06L6.166 6.166z"/>
+        </svg>
+      </button>
+
+      <!-- Menu + Dropdown -->
+      <div class="nb-menu-wrap">
+        <button class="nb-menu-btn" id="menuBtn" aria-label="Navigation menu" aria-expanded="false" aria-haspopup="true">
+          Menu
+          <svg viewBox="0 0 22 16" width="20" height="14" fill="none">
+            <rect x="0" y="1"  width="22" height="2" rx="1" fill="currentColor"/>
+            <rect x="0" y="7"  width="22" height="2" rx="1" fill="currentColor"/>
+            <rect x="0" y="13" width="22" height="2" rx="1" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <!-- DROPDOWN LIST (appears below button) -->
+        <div class="nb-dropdown" id="menuDropdown" role="menu">
+          <a href="#hero"      class="nb-drop-link" role="menuitem">Work</a>
+          <a href="#work"      class="nb-drop-link" role="menuitem">Projects</a>
+          <a href="#about"     class="nb-drop-link" role="menuitem">About</a>
+          <a href="#services"  class="nb-drop-link" role="menuitem">Services</a>
+          <a href="#contact"   class="nb-drop-link" role="menuitem">Contact</a>
+          <div class="nb-drop-divider"></div>
+          <div class="nb-drop-socials">
+            <a href="https://wa.me/201102056849"                                         target="_blank" rel="noopener">WhatsApp</a>
+            <a href="https://www.instagram.com/mohamed_elmenshawy__/"                    target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/in/mohamed-el-menshawy-b84817390/"         target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.behance.net/mohamed_elmenshawy"                         target="_blank" rel="noopener">Behance</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<!-- ─── SCROLL PROGRESS ─── -->
+<div class="scroll-prog" aria-hidden="true">
+  <div class="scroll-prog-fill" id="scrollFill"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     HERO — 6 Floating Thumbnails + Center Name
+     Layout (desktop):
+     [P1] [P3]  NAME  [P4] [P5]
+     [P2]              [P6]
+══════════════════════════════════════ -->
+<section class="hero" id="hero">
+
+  <!--
+    6 floating video thumbnails — 2 columns x 3 rows flanking the
+    center text block. LEFT col: top / middle(near) / bottom.
+    RIGHT col: top / middle(near) / bottom. All autoplay MUTED loop.
+    Click -> opens modal with full video + sound.
+  -->
+
+  <!-- LEFT — top -->
+  <button class="ft" data-id="1" style="left:14%;top:6%;width:12vw" aria-label="Open GTA Barber Promo">
+    <div class="ft-media">
+      <video class="ft-video" autoplay muted loop playsinline webkit-playsinline
+             poster="pics/thumb1.jpg" data-id="1">
+        <source src="videos/vid1.mp4" type="video/mp4">
+      </video>
+      <span class="ft-muted-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path stroke-linecap="round" d="M23 9l-6 6M17 9l6 6"/>
+        </svg>
+      </span>
+      <div class="ft-play">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      </div>
+    </div>
+    <div class="ft-label">
+      <span class="ft-coord">N 30.04° E 31.23°</span>
+      <span class="ft-name">GTA Barber Promo</span>
+      <span class="ft-cat">Commercial Ad</span>
+    </div>
+  </button>
+
+  <!-- LEFT — middle (near center) -->
+  <button class="ft" data-id="3" style="left:17%;top:38%;width:12vw" aria-label="Open Bug-Out App Campaign">
+    <div class="ft-media">
+      <video class="ft-video" autoplay muted loop playsinline webkit-playsinline
+             poster="pics/thumb3.jpg" data-id="3">
+        <source src="videos/vid3.mp4" type="video/mp4">
+      </video>
+      <span class="ft-muted-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path stroke-linecap="round" d="M23 9l-6 6M17 9l6 6"/>
+        </svg>
+      </span>
+      <div class="ft-play">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      </div>
+    </div>
+    <div class="ft-label">
+      <span class="ft-coord">N 30.08° E 31.29°</span>
+      <span class="ft-name">Bug-Out App</span>
+      <span class="ft-cat">App Marketing</span>
+    </div>
+  </button>
+
+  <!-- LEFT — bottom -->
+  <button class="ft" data-id="2" style="left:14%;top:69%;width:12vw" aria-label="Open Dental Awareness Film">
+    <div class="ft-media">
+      <video class="ft-video" autoplay muted loop playsinline webkit-playsinline
+             poster="pics/thumb2.jpg" data-id="2">
+        <source src="videos/vid2.mp4" type="video/mp4">
+      </video>
+      <span class="ft-muted-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path stroke-linecap="round" d="M23 9l-6 6M17 9l6 6"/>
+        </svg>
+      </span>
+      <div class="ft-play">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      </div>
+    </div>
+    <div class="ft-label">
+      <span class="ft-coord">N 29.97° E 31.13°</span>
+      <span class="ft-name">Dental Awareness</span>
+      <span class="ft-cat">Healthcare</span>
+    </div>
+  </button>
+
+  <!-- RIGHT — top -->
+  <button class="ft" data-id="5" style="right:14%;top:6%;width:12vw" aria-label="Open Barber Brand Film">
+    <div class="ft-media">
+      <video class="ft-video" autoplay muted loop playsinline webkit-playsinline
+             poster="pics/thumb5.jpg" data-id="5">
+        <source src="videos/vid5.mp4" type="video/mp4">
+      </video>
+      <span class="ft-muted-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path stroke-linecap="round" d="M23 9l-6 6M17 9l6 6"/>
+        </svg>
+      </span>
+      <div class="ft-play">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      </div>
+    </div>
+    <div class="ft-label">
+      <span class="ft-coord">N 30.06° E 31.24°</span>
+      <span class="ft-name">Barber Brand Film</span>
+      <span class="ft-cat">Commercial Ad</span>
+    </div>
+  </button>
+
+  <!-- RIGHT — middle (near center) -->
+  <button class="ft" data-id="4" style="right:17%;top:34%;width:12vw" aria-label="Open ProMed Clinic Showcase">
+    <div class="ft-media">
+      <video class="ft-video" autoplay muted loop playsinline webkit-playsinline
+             poster="pics/thumb4.jpg" data-id="4">
+        <source src="videos/vid4.mp4" type="video/mp4">
+      </video>
+      <span class="ft-muted-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path stroke-linecap="round" d="M23 9l-6 6M17 9l6 6"/>
+        </svg>
+      </span>
+      <div class="ft-play">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      </div>
+    </div>
+    <div class="ft-label">
+      <span class="ft-coord">N 30.00° E 31.21°</span>
+      <span class="ft-name">ProMed Clinic</span>
+      <span class="ft-cat">Healthcare</span>
+    </div>
+  </button>
+
+  <!-- RIGHT — bottom -->
+  <button class="ft" data-id="6" style="right:14%;top:69%;width:12vw" aria-label="Open Patient Trust Video">
+    <div class="ft-media">
+      <video class="ft-video" autoplay muted loop playsinline webkit-playsinline
+             poster="pics/thumb6.jpg" data-id="6">
+        <source src="videos/vid6.mp4" type="video/mp4">
+      </video>
+      <span class="ft-muted-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5z"/>
+          <path stroke-linecap="round" d="M23 9l-6 6M17 9l6 6"/>
+        </svg>
+      </span>
+      <div class="ft-play">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+      </div>
+    </div>
+    <div class="ft-label">
+      <span class="ft-coord">N 29.98° E 31.18°</span>
+      <span class="ft-name">Patient Trust Video</span>
+      <span class="ft-cat">Healthcare</span>
+    </div>
+  </button>
+
+  <!-- ── CENTER CONTENT ── -->
+  <div class="hero-body">
+
+    <div class="hero-portrait-mobile">
+      <img src="pics/mine.jpg" alt="Mohamed El-Menshawy"
+           onerror="this.onerror=null;this.src='pics/mine-placeholder.svg'"/>
     </div>
 
-    <div class="ambient-glow glow-1"></div>
-    <div class="ambient-glow glow-2"></div>
+    <p class="hero-eyebrow">Narrative Video Editor</p>
 
-    <header class="navbar">
-        <div class="container nav-wrapper">
-            <a href="index.html" class="logo">
-                Mohamed<span> El-Menshawy</span>.
-            </a>
-            <nav class="nav-links">
-                <a href="index.html" class="active">Home</a>
-                <a href="work.html">Portfolio</a>
-                <a href="https://drive.google.com/file/d/1zJU9JLJBu0N5BkcBWqsW9SXVU8oXXw5T/view?usp=sharing" target="_blank" class="nav-cta-btn">Resume</a>
-            </nav>
-            <div class="mobile-menu-icon">☰</div>
+    <h1 class="hero-name">
+      <span>MOHAMED</span>
+      <span>EL-MENSHAWY</span>
+    </h1>
+
+    <p class="hero-desc">
+      Helping creators and brands transform ordinary footage into
+      high-retention content through storytelling, motion, and strategic editing.
+    </p>
+
+    <div class="hero-stats" aria-label="Key statistics">
+      <div class="hero-stat">
+        <strong data-count="20">0</strong><em>+</em>
+        <span>Happy Clients</span>
+      </div>
+      <div class="hero-stat-divider" aria-hidden="true"></div>
+      <div class="hero-stat">
+        <strong class="stat-custom">1.5</strong><em>+</em>
+        <span>Years Experience</span>
+      </div>
+      <div class="hero-stat-divider" aria-hidden="true"></div>
+      <div class="hero-stat">
+        <strong data-count="100">0</strong><em>%</em>
+        <span>Dedication</span>
+      </div>
+    </div>
+
+    <div class="hero-btns">
+      <a href="#work" class="btn-white">View Projects</a>
+      <a href="https://wa.me/201102056849" target="_blank" rel="noopener noreferrer" class="btn-outline">Hire Me</a>
+    </div>
+  </div>
+
+  <p class="hero-scroll-hint" aria-hidden="true">SCROLL TO VIEW MORE ↓</p>
+</section>
+
+<!-- ══════════════════════════════════════
+     PROJECTS SECTION
+══════════════════════════════════════ -->
+<section class="section projects-section" id="work">
+  <div class="section-top">
+    <div>
+      <p class="eyebrow">Selected Work</p>
+      <h2 class="section-title">ALL TYPES<br>OF PROJECTS</h2>
+    </div>
+    <div class="projects-meta">
+      <p>Explore the intersection of storytelling and motion design — where every cut is a deliberate decision.</p>
+      <a href="#work" class="text-link">VIEW THE WORK ↓</a>
+    </div>
+  </div>
+
+  <div class="filters" role="tablist" aria-label="Filter projects">
+    <button class="filter-btn active" data-filter="all"        role="tab" aria-selected="true">All</button>
+    <button class="filter-btn"        data-filter="commercial" role="tab" aria-selected="false">Commercial</button>
+    <button class="filter-btn"        data-filter="healthcare" role="tab" aria-selected="false">Healthcare</button>
+  </div>
+
+  <div class="projects-grid" id="projGrid"></div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ABOUT
+══════════════════════════════════════ -->
+<section class="section about-section" id="about">
+  <div class="polaroid reveal">
+    <div class="polaroid-photo">
+      <img src="pics/mine.jpg" alt="Mohamed El-Menshawy"
+           onerror="this.onerror=null;this.src='pics/mine-placeholder.svg'"/>
+    </div>
+    <p class="polaroid-name">MOHAMED<br>EL-MENSHAWY</p>
+  </div>
+
+  <div class="about-text reveal">
+    <p class="eyebrow">The Editor</p>
+    <h2 class="section-title about-headline">YOUR NEXT<br>VIDEO EDITOR<br>FINDS THE BEST<br>STORY FOR YOU</h2>
+    <p>I don't just cut footage — I build narrative structures that make your audience feel something. From commercial ads to dental clinics, from barbershops to app campaigns, every edit is built around one question: what do you want your viewer to feel?</p>
+    <p>My background in business and marketing means every editing decision is tied to a measurable goal. Based in Egypt, working globally, delivering in 24–72 hours.</p>
+    <div class="about-skills">
+      <span>Premiere Pro</span>
+      <span>After Effects</span>
+      <span>Color Grading</span>
+      <span>Motion Graphics</span>
+      <span>Sound Design</span>
+    </div>
+    <a href="https://drive.google.com/file/d/1zJU9JLJBu0N5BkcBWqsW9SXVU8oXXw5T/view"
+       target="_blank" rel="noopener" class="btn-outline btn-outline--sm">Download CV ↗</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SERVICES
+══════════════════════════════════════ -->
+<section class="section services-section" id="services">
+  <div class="services-inner">
+    <div class="services-left reveal">
+      <p class="eyebrow">What I Do</p>
+      <h2 class="section-title">WHAT I<br>CREATE</h2>
+      <p class="services-sub">Every type of video content, built around your audience's attention span.</p>
+    </div>
+    <div class="services-list">
+      <div class="svc-row reveal"><span class="svc-n">01</span><span class="svc-name">Video Editing</span><span class="svc-d">Narrative-first editing — pacing, tension, emotion from raw footage.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">02</span><span class="svc-name">Podcast Editing</span><span class="svc-d">Long-form cleanup, clip extraction, social-ready shorts.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">03</span><span class="svc-name">Short-Form Content</span><span class="svc-d">Hook-driven Reels &amp; Shorts engineered to hold attention.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">04</span><span class="svc-name">Motion Graphics</span><span class="svc-d">Animated titles, kinetic typography, motion elements.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">05</span><span class="svc-name">Commercial Ads</span><span class="svc-d">High-impact product and brand commercial edits.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">06</span><span class="svc-name">Reels Editing</span><span class="svc-d">Algorithm-optimised cuts, captions, sound sync, visual hooks.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">07</span><span class="svc-name">Color Correction</span><span class="svc-d">Cinematic grades, skin tone correction, brand-consistent looks.</span></div>
+      <div class="svc-row reveal"><span class="svc-n">08</span><span class="svc-name">YouTube Content</span><span class="svc-d">Long-form, retention-optimised editing with CTAs and chapters.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     RESULTS
+══════════════════════════════════════ -->
+<section class="section results-section" id="results">
+  <div class="results-grid">
+    <div class="res reveal"><strong data-count="20">0</strong><span>+</span><p>Happy Clients</p></div>
+    <div class="res reveal"><strong class="stat-custom">1.5</strong><span>+</span><p>Years Experience</p></div>
+    <div class="res reveal"><strong data-count="50">0</strong><span>+</span><p>Projects Delivered</p></div>
+    <div class="res reveal"><strong data-count="95">0</strong><span>%</span><p>Client Satisfaction</p></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════ -->
+<section class="section testi-section" id="testimonials">
+  <p class="eyebrow">Client Voices</p>
+  <h2 class="section-title">WHAT CLIENTS SAY</h2>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="testi-stars">★★★★★</div>
+      <p>"Mohamed transformed our clinic's footage into something that genuinely builds trust with patients. The result exceeded our expectations."</p>
+      <div class="testi-from"><strong>ProMed Clinic</strong><span>Medical Brand</span></div>
+    </div>
+    <div class="testi-card testi-card--ft reveal">
+      <div class="testi-stars">★★★★★</div>
+      <p>"The GTA-style video for our barbershop went viral. Bookings went up noticeably. Creative, fast, and perfectly on-brand."</p>
+      <div class="testi-from"><strong>Barbershop Client</strong><span>Commercial Ad</span></div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-stars">★★★★★</div>
+      <p>"Fast, professional, and understands short-form retention perfectly. The content performed significantly better than anything we had before."</p>
+      <div class="testi-from"><strong>App Startup Client</strong><span>App Marketing</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     CONTACT
+══════════════════════════════════════ -->
+<section class="section contact-section" id="contact">
+  <div class="contact-glow" aria-hidden="true"></div>
+  <div class="contact-inner">
+    <div class="contact-left reveal">
+      <p class="eyebrow">Let's Work Together</p>
+      <h2 class="contact-headline">
+        GET IN TOUCH<br>WITH YOUR<br>NEXT VIDEO<br><span>EDITOR.</span>
+      </h2>
+      <a href="https://wa.me/201102056849" target="_blank" rel="noopener noreferrer" class="contact-cta">
+        GET IN TOUCH
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="10" cy="10" r="8"/>
+          <path stroke-linecap="round" d="M7 10h6M10 7l3 3-3 3"/>
+        </svg>
+      </a>
+    </div>
+    <div class="contact-links reveal">
+      <a href="https://wa.me/201102056849"                                         target="_blank" rel="noopener" class="clink"><span>WhatsApp</span><small>+20 110 205 6849</small></a>
+      <a href="mailto:Elmenshawy486@gmail.com"                                                                    class="clink"><span>Email</span><small>Elmenshawy486@gmail.com</small></a>
+      <a href="https://www.linkedin.com/in/mohamed-el-menshawy-b84817390/"         target="_blank" rel="noopener" class="clink"><span>LinkedIn</span><small>Mohamed El-Menshawy</small></a>
+      <a href="https://www.behance.net/mohamed_elmenshawy"                         target="_blank" rel="noopener" class="clink"><span>Behance</span><small>@mohamed_elmenshawy</small></a>
+      <a href="https://www.instagram.com/mohamed_elmenshawy__/"                    target="_blank" rel="noopener" class="clink"><span>Instagram</span><small>@mohamed_elmenshawy__</small></a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer class="site-footer">
+  <span>© 2026 Mohamed El-Menshawy</span>
+  <a href="mailto:Elmenshawy486@gmail.com" class="footer-email">Elmenshawy486@gmail.com</a>
+  <span>Egypt → World</span>
+</footer>
+
+<!-- ══════════════════════════════════════
+     PROJECT MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalBackdrop" hidden aria-hidden="true"></div>
+<div class="modal-wrap" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="modal">
+    <button class="modal-close" id="modalClose" aria-label="Close project">
+      <svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" width="16" height="16">
+        <path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <div class="modal-video-box">
+      <video class="modal-video" id="modalVideo" controls preload="metadata" playsinline></video>
+      <div class="modal-no-vid" id="modalNoVid" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" width="36" height="36">
+          <path stroke-linecap="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z"/>
+        </svg>
+        <p>Video coming soon</p>
+      </div>
+    </div>
+    <div class="modal-info">
+      <div class="modal-info-head">
+        <div>
+          <span class="modal-cat" id="modalCat"></span>
+          <h2 class="modal-title" id="modalTitle"></h2>
         </div>
-    </header>
+        <div class="modal-tags" id="modalTags"></div>
+      </div>
+      <button class="modal-desc-btn" id="descBtn" aria-expanded="false">
+        Description
+        <svg class="desc-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path stroke-linecap="round" d="M10 4v12M4 10l6 6 6-6"/>
+        </svg>
+      </button>
+      <div class="modal-desc-panel" id="descPanel">
+        <div class="modal-details" id="modalDetails"></div>
+        <div class="modal-sw"      id="modalSw"></div>
+        <div                       id="modalExtLink"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <main>
-        <section class="hero-section">
-            <div class="container hero-grid">
-                <div class="hero-content fade-up">
-                    <div class="badge-pill">
-                        <span class="dot"></span> Available for Projects
-                    </div>
-                    <h1 class="display-title">
-                        I Edit Content That <br>
-                        <span class="text-gradient">Wins Attention.</span>
-                    </h1>
-                    <p class="lead-text">
-                        Junior Video Editor with 1+ years of experience crafting high-retention Reels, Ads, and Podcasts. 
-                        I bridge the gap between creative storytelling and business results.
-                    </p>
-                    <div class="button-group">
-                        <a href="work.html" class="btn btn-primary magnetic">
-                            View Case Studies
-                        </a>
-                        <a href="https://drive.google.com/file/d/1zJU9JLJBu0N5BkcBWqsW9SXVU8oXXw5T/view?usp=sharing" target="_blank" class="btn btn-outline magnetic">
-                            Download CV
-                        </a>
-                    </div>
-                    
-                    <div class="hero-stats">
-                        <div class="stat">
-                            <strong>1+</strong> <span>Years Exp.</span>
-                        </div>
-                        <div class="stat">
-                            <strong>5+</strong> <span>Happy Clients</span>
-                        </div>
-                        <div class="stat">
-                            <strong>100%</strong> <span>Dedication</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="hero-visual fade-up delay-200">
-                    <div class="image-card-wrapper">
-                        <img src="mine.jpg" alt="Mohamed Safwat" class="profile-img">
-                        <div class="floating-card glass-morphism">
-                            <span class="icon">⚡</span>
-                            <div>
-                                <strong>Fast Turnaround</strong>
-                                <small>24-48 Hours</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="about-section">
-            <div class="container">
-                <div class="section-header center-text">
-                    <span class="subtitle">The Professional</span>
-                    <h2>Background & Education</h2>
-                </div>
-
-                <div class="about-grid">
-                    <div class="info-card glass-morphism tilt-card">
-                        <div class="card-icon">🎓</div>
-                        <h3>Education</h3>
-                        <p class="degree">Bachelor of Commerce (English Section)</p>
-                        <p class="uni">Al-Azhar University</p>
-                        <span class="status-tag">Currently Studying</span>
-                        <p class="desc">
-                            My business background helps me understand the marketing psychology behind every cut and transition I make.
-                        </p>
-                    </div>
-
-                    <div class="info-card glass-morphism tilt-card">
-                        <div class="card-icon">🛠️</div>
-                        <h3>Technical Arsenal</h3>
-                        <div class="skills-cloud">
-                            <span class="skill-pill">Adobe Premiere Pro</span>
-                            <span class="skill-pill">After Effects</span>
-                            <span class="skill-pill">Color Grading</span>
-                            <span class="skill-pill">Sound Design</span>
-                            <span class="skill-pill">Motion Graphics</span>
-                            <span class="skill-pill">Masking</span>
-                            <span class="skill-pill">English (Good)</span>
-                            <span class="skill-pill">Arabic (Native)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="timeline-section">
-            <div class="container">
-                <div class="section-header">
-                    <span class="subtitle">My Journey</span>
-                    <h2>Work Experience</h2>
-                </div>
-
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content glass-morphism">
-                            <span class="date">2024 - Present</span>
-                            <h3>Freelance Video Editor</h3>
-                            <p>Working with Gulf-based clients and Mass Comm students to create high-impact social media reels. Focused on pacing, visual clarity, and storytelling.</p>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-marker"></div>
-                        <div class="timeline-content glass-morphism">
-                            <span class="date">Contract Project</span>
-                            <h3>Social Media Video Editor</h3>
-                            <h4>Promed Clinic</h4>
-                            <p>Edited reels and short videos aimed at medical awareness and brand promotion. Optimized specifically for Instagram engagement algorithms.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="master-footer">
-        <div class="container">
-            <div class="footer-cta glass-morphism">
-                <div class="cta-content">
-                    <h2>Ready to scale your content?</h2>
-                    <p>Let's create something that breaks the scroll.</p>
-                </div>
-                <div class="cta-buttons">
-                    <a href="https://wa.me/201102056849" target="_blank" class="btn btn-primary">Chat on WhatsApp</a>
-                </div>
-            </div>
-
-            <div class="footer-links-grid">
-                <div class="footer-col brand-col">
-                    <h3 class="footer-logo">Mohamed<span> El-Menshawy</span>.</h3>
-                    <p>Professional Video Editor tailored for the modern digital landscape. Based in Egypt, working globally.</p>
-                </div>
-
-                <div class="footer-col">
-                    <h4>Navigation</h4>
-                    <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="work.html">Portfolio</a></li>
-                        <li><a href="https://drive.google.com/file/d/1zJU9JLJBu0N5BkcBWqsW9SXVU8oXXw5T/view?usp=sharing" target="_blank">Download CV</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h4>Contact</h4>
-                    <ul>
-                        <li><a href="mailto:Elmenshawy486@gmail.com">Elmenshawy486@gmail.com</a></li>
-                        <li><a href="tel:01102056849">01102056849</a></li>
-                        <li><a href="https://wa.me/201102056849">WhatsApp Direct</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-col">
-                    <h4>Socials</h4>
-                    <div class="social-icons">
-                        <a href="https://www.linkedin.com/in/mohamed-el-menshawy-b84817390/" target="_blank" aria-label="LinkedIn">LinkedIn</a>
-                        <a href="https://www.behance.net/mohamed_elmenshawy" target="_blank" aria-label="Behance">Behance</a>
-                        <a href="https://www.instagram.com/mohamed_elmenshawy__/" target="_blank" aria-label="Instagram">Instagram</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-bottom">
-                <p>&copy; 2026 Mohamed Safwat Elmenshawy. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
