@@ -390,9 +390,11 @@ function renderProjects(filter){
 
   grid.innerHTML=list.map(p=>`
     <div class="pc reveal" data-id="${p.id}" tabindex="0" role="button" aria-label="Open: ${p.title}">
-      <div class="pc-thumb">
-        <img src="${p.thumb}" alt="${p.title}" loading="lazy"
-             onerror="this.onerror=null;this.style.opacity='0'"/>
+<div class="pc-thumb">
+        <video src="${p.video}" muted loop playsinline
+               style="width:100%;height:100%;object-fit:cover;display:block"
+               onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0">
+        </video>
         <div class="pc-overlay">
           <div class="pc-play">
             <svg viewBox="0 0 24 24" fill="white" width="14" height="14"><path d="M8 5.14v14l11-7-11-7z"/></svg>
