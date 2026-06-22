@@ -15,7 +15,7 @@ const PROJECTS = [
     outcome:"Significant increase in social media reach, brand identity modernisation, and increased bookings driven by virality.",
     software:["Premiere Pro","After Effects"],
     tags:["Motion Design","Commercial","Viral"],
-    video:"videos/vid1.mp4", thumb:"pics/thumb1.jpg"
+    video:"videos/vid1.mp4"
   },
   {
     id:2, title:"Dental Awareness Film", client:"Dental Clinic",
@@ -27,7 +27,7 @@ const PROJECTS = [
     outcome:"Improved audience understanding, elevated clinic authority, and measurably higher consultation bookings.",
     software:["Premiere Pro","After Effects"],
     tags:["Healthcare","Motion Graphics","Education"],
-    video:"videos/vid2.mp4", thumb:"pics/thumb2.jpg"
+    video:"videos/vid2.mp4"
   },
   {
     id:3, title:"Bug-Out App Campaign", client:"Tech Startup",
@@ -39,7 +39,7 @@ const PROJECTS = [
     outcome:"Boosted user confidence, increased download intent, and improved platform discoverability.",
     software:["Premiere Pro","After Effects"],
     tags:["App Marketing","Short-Form","Storytelling"],
-    video:"videos/vid3.mp4", thumb:"pics/thumb3.jpg"
+    video:"videos/vid3.mp4"
   },
   {
     id:4, title:"ProMed Clinic Showcase", client:"ProMed Clinic",
@@ -51,7 +51,7 @@ const PROJECTS = [
     outcome:"Enhanced brand appeal, stronger trust signals, and measurably higher inquiry and booking rates.",
     software:["Premiere Pro","After Effects"],
     tags:["Healthcare","Brand Film","Cinematic"],
-    video:"videos/vid4.mp4", thumb:"pics/thumb4.jpg"
+    video:"videos/vid4.mp4"
   },
   {
     id:5, title:"Barber Brand Film", client:"Barbershop",
@@ -63,7 +63,7 @@ const PROJECTS = [
     outcome:"Stronger first impressions, increased brand credibility, and improved social media presence.",
     software:["Premiere Pro","After Effects"],
     tags:["Brand Film","Commercial","Lifestyle"],
-    video:"videos/vid5.mp4", thumb:"pics/thumb5.jpg"
+    video:"videos/vid5.mp4"
   },
   {
     id:6, title:"Patient Trust Video", client:"Dental Clinic",
@@ -75,7 +75,7 @@ const PROJECTS = [
     outcome:"Increased patient confidence, higher booking conversion, and a notable reduction in appointment cancellations.",
     software:["Premiere Pro","After Effects"],
     tags:["Healthcare","Testimonial","Brand Trust"],
-    video:"videos/vid6.mp4", thumb:"pics/thumb6.jpg"
+    video:"videos/vid6.mp4"
   }
 ];
 
